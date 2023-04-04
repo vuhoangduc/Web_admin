@@ -1,0 +1,201 @@
+{{> header}}
+
+  <ul class="nav nav-pills mt-4 mb-4">
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+  Add new user
+</button>
+  <a class="nav-link " href="/users/bins">Thùng rác</a>
+  <a class="nav-link " href="/users">tất cả</a>
+  {{#each groups}}
+    <li class="nav-item my-nav-item">  
+      <a class="nav-link " href="/users/{{this._id}}">{{this.name_group}}</a>
+    </li>
+  {{/each}}
+</ul>
+<table id="user-table" class="table mt-4">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Avatar</th>
+      <th>Email</th>
+      <th>Group</th>
+      <th colspan="3">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+     {{#each users}}
+    <tr>
+      <td>{{sum @index 1}}</td>
+      <td>{{this.user_name}}</td>
+     <td><img src="{{this.img_url}}" alt="{{this.img_url}}" style="width: 70px; height: 70px; border-radius: 50%;"></td>
+      <td>{{this.email}}</td>
+      <td>{{this._id_group.name_group}}</td>
+      <td>{{this.status}}</td>
+      <td>
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#updateModal{{this._id}}">Sửa</button>
+        <div class="modal fade" id="updateModal{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel{{this._id}}" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel{{this._id}}">Update User "{{this.username}}"</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form method="POST" action="/users/update/{{this._id}}?_method=PUT" enctype="multipart/form-data">
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username"  name="username" value="{{this.user_name}}">
+                      </div> 
+                      <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{this.email}}">
+                      </div>
+                      <div class="form-group">
+                        <img id="preview" style="width: 100px;height: 100px;" src="{{this.img_url}}" alt="{{this.user_name}}" class="img-thumbnail">
+                      </div>
+                      <div class="form-group">
+                        <label for="img_file">Image File:</label>
+                        <input type="file" class="form-control-file" id="img_file" name="img_file">
+                      </div>
+                      <div class="form-group">
+                        <label for="group">Group:</label>
+                        <select class="form-control" id="group" name="group">
+                          {{#each ../groups}}
+                            <option value="{{this._id}}" {{#ifEqual ../this._id_group.name_group this.name_group}}selected{{/ifEqual}}>{{this.name_group}}</option>
+                          {{/each}}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Status:</label>
+                        <div class="checkbox">
+                          <label><input type="checkbox" value="Active" name="status" {{#ifEqual this.status "Active"}}checked{{/ifEqual}}>Active</label>
+                          <label><input type="checkbox" value="Inactive" name="status" {{#ifEqual this.status "Inactive"}}checked{{/ifEqual}}>Inactive</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+      </td>
+      <td>
+          <form method="POST" action="/users/delete/{{this._id}}?_method=DELETE">
+            <input type="hidden" name="_id" value="{{this._id}}">
+            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#deleteModal{{this._id}}">Xóa</button>
+
+            <div class="modal fade" id="deleteModal{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{this._id}}" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{this._id}}">Confirm Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete user "{{this.user_name}}"?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Yes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </td>
+    </tr>
+    {{else}}
+    <tr>
+      <td colspan="5" class="text-center">
+        chưa có user nào
+      </td>
+    </tr>
+     {{/each}}
+  </tbody>
+</table>
+<ul class="pagination justify-content-center">
+  {{#if hasPreviousPage }}
+  <li class="page-item"><a class="page-link" href="?page={{previousPage}}">Trang trước</a></li>
+  {{/if}}
+  {{#each pages}}
+  <li class="page-item ">
+    <a class="page-link" href="?page={{this}}">{{this}}</a>
+  </li>
+  {{/each}} 
+  {{#if hasNextPage }}
+  <li class="page-item"><a class="page-link" href="?page={{nextPage}}">Trang sau</a></li>
+  {{/if}}
+</ul>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add new user</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST" action="/users/addnew">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email">
+          </div>
+          <div class="form-group">
+            <label for="pass">Password:</label>
+            <input type="password" class="form-control" id="pass" name="pass">
+          </div>
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username"  name="username">
+          </div>
+          <div class="form-group">
+            <img id="preview" style="width: 100px;height: 100px;" src="{{this.img_url}}" alt="{{this.user_name}}" class="img-thumbnail">
+          </div>
+          <div class="form-group">
+            <label for="group">Group:</label>
+            <select class="form-control" id="group" name="group">
+              {{#each groups}}
+                <option value="{{this._id}}">{{this.name_group}}</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status:</label>
+            <div class="checkbox">
+              <label><input type="checkbox" value="Active" name="status" checked>Active</label>
+              <label><input type="checkbox" value="Inactive" name="status">Inactive</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  const inputElement = document.getElementById("img_file");
+  const previewElement = document.getElementById("preview");
+  
+  inputElement.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    const url = URL.createObjectURL(file);
+    previewElement.setAttribute("src", url);
+  });
+</script>
+

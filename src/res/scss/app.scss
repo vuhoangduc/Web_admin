@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+body{
+  background: #644bff;
+  padding: 0 20px;
+}
+::selection{
+  color: #fff;
+  background: #664AFF;
+}
+.wrapper {
+  position: relative; /* thêm thuộc tính position: relative */
+  }
+  
+.wrapper .search-input{
+  background: #fff;
+  width: 100%;
+  border-radius: 5px;
+  position: relative;
+  box-shadow: 0px 1px 5px 3px rgba(0,0,0,0.12);
+}
+.search-input input{
+  height: 50px;
+  width: 100%;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0 60px 0 20px;
+  font-size: 18px;
+  box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+}
+.search-input.active input{
+  border-radius: 5px 5px 0 0;
+}
+.search-input .autocom-box{
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.search-input.active .autocom-box{
+  padding: 10px 8px;
+  opacity: 1;
+  pointer-events: auto;
+  overflow-y: scroll;
+  
+}
+.form-inline {
+  position: relative; /* thêm position: relative vào phần tử cha */
+}
+.autocom-box{
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  z-index: 9999;
+  background-color: #fff;
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  }
+.autocom-box li{
+  list-style: none;
+  display: none;
+  width: 100%;
+  cursor: default;
+  border-radius: 3px;
+}
+.autocom-box img{
+  width: 80px;
+  height: 80px;
+}
+.autocom-box.show {
+  display: block;
+}
+.search-input.active .autocom-box li{
+  display: block;
+}
+.autocom-box li:hover{
+  background: #efefef;
+}
+.search-input .icon{
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  height: 55px;
+  width: 55px;
+  text-align: center;
+  line-height: 55px;
+  font-size: 20px;
+  color: #644bff;
+  cursor: pointer;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.img-xem-chi-tiet {
+  max-width: 100%;
+  display: block;
+  margin: 20px auto;
+}
+p {
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+h2 {
+  margin-top: 40px;
+  font-size: 24px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 20px;
+}
+th, td {
+  text-align: left;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+th {
+  background-color: #f2f2f2;
+  font-weight: normal;
+}

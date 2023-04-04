@@ -1,0 +1,138 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Duc.js</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/logout">Logout <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Người dùng
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/users">Người dùng</a>
+          <a class="dropdown-item" href="/groups">Group</a>
+          <a class="dropdown-item" href="#">Role</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Sản phẩm
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/products">Sản phẩm</a>
+          <a class="dropdown-item" href="/categorys">Thể loại</a>
+        </div>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Thông báo</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Settings
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Banner</a>
+          <a class="dropdown-item" href="#">Info</a>
+        </div>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <div class="wrapper">
+        <div class="search-input">
+          <a href=""></a>
+          <input type="text" placeholder="Type to search..">
+          <div class="autocom-box">
+          </div>
+          <div class="icon"><i class="fas fa-search"></i></div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</nav>
+
+
+<script>
+  const searchWrapper = document.querySelector(".search-input");
+  const inputBox = searchWrapper.querySelector("input");
+  const suggBox = searchWrapper.querySelector(".autocom-box");
+  let linkTag = searchWrapper.querySelector("a");
+  let suggestions = {};
+  let users = {};
+  let categorys = {};
+  let groups = {};
+  let name_product = {};
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "http://192.168.1.4:3000/search", true);
+  xhr.setRequestHeader("accept", "application/json");
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      const productsJson = xhr.responseText;
+      const productList = JSON.parse(productsJson);
+      name_product = productList.products.map(product => product.name_product);
+
+      suggestions = productList.products;
+      users = productList.users;
+      categorys = productList.categorys;
+      groups = productList.groups;
+
+      inputBox.addEventListener("input", showSuggestions);
+    }
+  };
+  xhr.send();
+  function showSuggestions(e) {
+    let userData = e.target.value; //user entered data
+    let emptyArray = [];
+
+
+    if (userData) {
+      emptyArray = suggestions.map(product => product).filter((data) => {
+        if (data.name_product.toLocaleLowerCase().startsWith(userData.toLocaleLowerCase())) {
+          return data;
+        }
+      });
+      if (emptyArray.length === 0) {
+        emptyArray = users.map(users => users).filter((data) => {
+          if (data.user_name.toLocaleLowerCase().startsWith(userData.toLocaleLowerCase())) {
+            return data;
+          }
+        });
+      }
+      emptyArray = emptyArray.map((data) => {
+        return (data =
+          `
+    <div data-id="${data._id}">
+      <li>
+        <p>${data.name_product ? data.name_product : data.user_name}</p>
+        <img src="${data.img_url}" alt="${data.name_product}" />
+      </li>
+    </div>
+    `
+        );
+      });
+
+      suggBox.onclick = (event) => {
+        const clickedItemId = event.target.closest('div').getAttribute('data-id');
+        webLink = `/search/timchitiet/${clickedItemId}`;
+        linkTag.setAttribute("href", webLink);
+        linkTag.click();
+        console.log(clickedItemId)
+      };
+
+      searchWrapper.classList.add("active"); //show autocomplete box
+      suggBox.innerHTML = emptyArray.join("");
+    } else {
+      searchWrapper.classList.remove("active"); //hide autocomplete box
+      suggBox.innerHTML = "";
+    }
+  }
+</script>

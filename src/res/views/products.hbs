@@ -1,0 +1,264 @@
+{{> header}}  
+<ul class="nav nav-pills mt-4 mb-4">
+  <li class="nav-item">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+      Add new product
+    </button>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/products/bins">Thùng rác</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/products">Tất cả</a>
+  </li>
+  {{#each categoryes}}
+  <li class="nav-item my-nav-item">
+    <a class="nav-link" href="/products/{{this._id}}">{{this.name_category}}</a>
+  </li>
+  {{/each}}
+  <li class="nav-item ml-auto">
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{value}}
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="/products" data-value="all">Thứ tự hiển thị</a>
+        <a class="dropdown-item" href="/products/high-to-low" data-value="high-to-low">giá cao đến thấp</a>
+        <a class="dropdown-item" href="/products/sapxep/newest" data-value="newest">mới nhất</a>
+        <a class="dropdown-item" href="/products/sapxep/low-to-high" data-value="low-to-high">giá thấp đến cao</a>
+      </div>
+    </div>
+</ul>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Stt</th>
+      <th scope="col">Tên sản phẩm</th>
+      <th scope="col">Hình ảnh</th>
+      <th scope="col">Thể loại</th>
+      <th scope="col">Giá</th>
+      <th scope="col">Số lượng</th>
+      <th scope="col" colspan="3">Tình trạng</th>
+    </tr>
+  </thead>
+  <tbody>
+
+      {{#each products}}
+      <tr>
+
+        <th scope="row">{{stt ../currentPage 5 @index}}</th>
+        <td><a class="nav-link " href="/products/xemchitiet/{{this._id}}">{{this.name_product}}</td>
+        <td><img style="width: 100px;height: 100px;" src="{{this.img_url}}" alt="{{this.name_product}}" class="img-thumbnail"></td>
+        <td>{{this._id_category.name_category}}</td>
+        <td>{{this.price}}</td>
+        <td>{{this.quantity}}</td>
+        <td>{{this.status}}</td>
+        <td>
+          <button type="button" class="btn btn-link" data-toggle="modal" data-target="#updateModal{{this._id}}">Sửa</button>
+          <div class="modal fade" id="updateModal{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel{{this._id}}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="updateModalLabel{{this._id}}">Cập nhật sản phẩm "{{this.name_product}}"</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form method="POST" enctype="multipart/form-data" action="/products/update/{{this._id}}?_method=PUT">
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label for="name">Tên sản phẩm:</label>
+                      <input type="text" class="form-control" id="name" name="name" value="{{this.name_product}}">
+                    </div>
+                    <div class="form-group">
+                      
+                      <img id="preview" style="width: 100px;height: 100px;" src="{{this.img_url}}" alt="{{this.name_product}}" class="img-thumbnail">
+                    </div>
+                    <div class="form-group">
+                      <label for="img_file">Ảnh sản phẩm:</label>
+                      <input type="file" class="form-control-file" id="img_file" name="img_file" value="{{this.img_url}}">
+                    </div>
+                    <div class="form-group">
+                      <label for="content">Mô tả sản phẩm:</label>
+                      <textarea class="form-control" id="content" name="content" rows="3">{{this.content}}</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label for="price">Giá sản phẩm:</label>
+                      <input type="text" class="form-control" id="price" name="price" value="{{this.price}}">
+                    </div>
+                    <div class="form-group">
+                      <label for="group">Danh mục sản phẩm:</label>
+                        <select class="form-control" id="group" name="group">
+                          {{#each ../categoryes}}
+                          {{log categoryes}}
+                            <option value="{{this._id}}" {{#ifEqual ../this._id_category.name_category this.name_category}}selected{{/ifEqual}}>{{this.name_category}}</option>
+                          {{/each}}
+                        </select>
+                      </div>
+                      <div class="form-outline" style="width: 22rem;">
+                          <label class="form-label" for="typeNumber">Số lượng</label>
+                          <input type="number" id="typeNumber" name="quantity" class="form-control" value="{{this.quantity}}" />
+                        
+                      </div>
+                      <div class="form-group">
+                        <label>Status:</label>
+                        <div class="checkbox">
+                          <label><input type="checkbox" value="Còn hàng" name="status" {{#ifEqual this.status "Còn hàng"}}checked{{/ifEqual}}>Còn Hàng</label>
+                          <label><input type="checkbox" value="Hết hàng" name="status" {{#ifEqual this.status "Hết hàng"}}checked{{/ifEqual}}>Hết hàng</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+      </td>
+      <td>
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#deleteModal{{this._id}}">Xóa</button>
+        <form method="POST" action="/products/delete/{{this._id}}?_method=DELETE">
+          <input type="hidden" name="_id" value="{{this._id}}">
+          <div class="modal fade" id="deleteModal{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{this._id}}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel{{this._id}}">Confirm Delete</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete product "{{this.name_product}}"?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-danger">Yes</button>
+            </div>
+          </div>
+        </div>
+        </div>
+        </form>
+      </td>
+
+    </tr>
+        {{else}}
+    <tr>
+      <td colspan="5" class="text-center">
+        chưa có sản phẩm nào
+      </td>
+    </tr>
+        {{/each}}
+  </tbody>
+</table>
+
+<ul class="pagination justify-content-center">
+  {{#if hasPreviousPage }}
+  <li class="page-item"><a class="page-link" href="?page={{previousPage}}">Trang trước</a></li>
+  {{/if}}
+  {{#each pages}}
+  <li class="page-item ">
+    <a class="page-link" href="?page={{this}}">{{this}}</a>
+  </li>
+  {{/each}} 
+  {{#if hasNextPage }}
+  <li class="page-item"><a class="page-link" href="?page={{nextPage}}">Trang sau</a></li>
+  {{/if}}
+</ul>
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add new product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST" enctype="multipart/form-data" action="/products/addnew">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="fullname">name:</label>
+            <input type="text" class="form-control" id="name" name="name">
+          </div>
+          <div class="form-group">
+            <label for="img_file">Image File:</label>
+            <input type="file" class="form-control-file" id="img_file" name="img_file">
+          </div>
+          <div class="form-group">
+            <label for="pass">content:</label>
+            <input type="text" class="form-control" id="content" name="content">
+          </div>
+          <div class="form-group">
+            <label for="email">price:</label>
+            <input type="text" class="form-control" id="price" name="price">
+          </div>
+          <div class="form-group">
+            <label for="group">Category:</label>
+            <select class="form-control" id="group" name="group">
+            {{#each categoryes}}
+              <option value="{{this._id}}">{{this.name_category}}</option>
+            {{/each}}
+            </select>
+          </div>
+          <div class="form-outline" style="width: 22rem;">
+              <label class="form-label" for="typeNumber">Số lượng</label>
+              <input value="50" type="number" id="typeNumber" name="quantity" class="form-control" />
+            
+          </div>
+          <div class="form-group">
+            <label>Status:</label>
+            <div class="checkbox">
+              <label><input type="checkbox" value="Còn hàng" name="status" checked>Còn Hàng</label>
+              <label><input type="checkbox" value="Hết hàng" name="status">Hết hàng</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const inputElement = document.getElementById("img_file");
+  const previewElement = document.getElementById("preview");
+  
+  inputElement.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    const url = URL.createObjectURL(file);
+    previewElement.setAttribute("src", url);
+  });
+
+
+const dropdownItems = document.querySelectorAll('.dropdown-item');
+const dropdownButton = document.getElementById('dropdownMenuButton');
+
+dropdownItems.forEach(item => {
+  item.addEventListener('click', function(event) {
+    event.preventDefault();
+    const selectedValue = event.target.getAttribute('data-value');
+    const selectedText = event.target.textContent;
+    dropdownButton.textContent = selectedText;
+    window.location.href = event.target.getAttribute('href'); // Thêm đoạn mã này để chuyển hướng
+  });
+});
+</script>
+
+
+
